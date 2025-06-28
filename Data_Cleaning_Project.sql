@@ -1,14 +1,20 @@
 -- Data cleaning 
 
  SELECT * FROM  layoffs;
--- we have remove duplicates, standarise the data
--- first we create table with all the data same as the raw table 
+-- first we create table with all the data same as the raw table as doing anything with raw data is not good
 CREATE TABLE layoffs_standarize 
- SELECT * FROM  layoffs ;
+SELECT * FROM  layoffs ;
+
 
 SELECT * FROM  layoffs_standarize ;
 
--- deleting duplicates
+-- now when we are data cleaning we usually follow a few steps
+-- check for duplicates and remove any
+-- standardize data and fix errors
+-- Look at null values and see what 
+-- remove any columns and rows that are not necessary
+
+-- checking for duplicates and remove any
 
 SELECT *, ROW_NUMBER() OVER ( PARTITION BY 
 company, location, industry, total_laid_off, percentage_laid_off, `date`, stage, country, fundS_raised_millions
@@ -56,7 +62,7 @@ WHERE No_of_Rows > 1 ;
 
 SELECT * FROM layoffs_standarize2 ; 
 
--- Standarrizing data
+-- standardizing data and fix errors
 
 -- triming the extra spaces present 
 
@@ -107,14 +113,14 @@ SELECT `date` FROM layoffs_standarize2;
 ALTER TABLE layoffs_standarize2
 MODIFY COLUMN `date` DATE ;
 
--- now we look to null and ' ' data in indutry column and try to fill it 
+-- Look at null values and see what can we do 
 
 SELECT * FROM layoffs_standarize2 
 WHERE industry IS NULL
 OR industry = '' ;  
 
--- here we have Airbnb, Bally's Interactive, Carvana, Juul
-
+-- here we have Airbnb, Bally's Interactive, Carvana, Juul which has null and '' values
+-- finding values that can replace null and '' 
 SELECT * FROM layoffs_standarize2 
 WHERE company = 'Airbnb' or company='Bally''s Interactive' or company='Carvana' or company='Juul'; 
 
@@ -133,12 +139,13 @@ UPDATE layoffs_standarize2
 SET industry = 'Consumer'
 WHERE industry = '' AND company = 'Juul' ;
 
--- we can also do it using joins
+-- we can also do it using joins it is a bit complex
 -- now only Bally's Interactive is left with null value 
 
 SELECT * FROM layoffs_standarize2
 WHERE company LIKE 'Bally%' ;
 
+-- remove any columns and rows that are not necessary
 -- lets look on total_laid_off and percentage_laid_off where they both null
 
 SELECT * FROM layoffs_standarize2 
@@ -159,6 +166,7 @@ ALTER TABLE layoffs_standarize2
 DROP COLUMN No_of_Rows;
 
 -- Now our raw data is cleaned 
+
 SELECT * FROM layoffs_standarize2;
 
 
